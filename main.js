@@ -1,12 +1,12 @@
 const display = document.querySelector(".display");
-const clear = document.querySelector(".clear");
-const number = document.querySelectorAll(".number");
-const dot = document.querySelector(".dot")
-const operator = document.querySelectorAll(".operator");
-const result = document.querySelector(".result");
+const clearButton = document.querySelector(".clear");
+const numberButton = document.querySelectorAll(".number");
+const dotButton = document.querySelector(".dot")
+const operatorButton = document.querySelectorAll(".operator");
+const resultButton = document.querySelector(".result");
 
-let numberOne = null;
-let numberTwo = null;
+let firstValue = null;
+let secondValue = null;
 let selectedOperation = null;
 let repeatedNumber = false;
 
@@ -16,43 +16,39 @@ const calculadoraHtml = () => {
 
 const addEventListeners = () => {
 
-clear.addEventListener("click", clearDisplay);
+clearButton.addEventListener("click", clearDisplay);
 
-number.forEach((button) =>{
+numberButton.forEach((button) =>{
   button.addEventListener('click', () => {
     addNumber(button.innerText);
   })
 });
 
-dot.addEventListener("click", addDot);
+dotButton.addEventListener("click", addDot);
 
-operator.forEach((button) =>{
+operatorButton.forEach((button) =>{
   button.addEventListener("click", () => {
     addOperator(button.innerText);
   })
 });
 
-result.addEventListener("click", makeOperation);
+resultButton.addEventListener("click", makeOperation);
 
 };
 
 const clearDisplay = () => {
   display.innerText = "";
-  reset();
-};
-
-const reset = () => {
-  numberOne = null;
-  numberTwo = null;
+  firstValue = null;
+  secondValue = null;
   selectedOperation = null;
   repeatedNumber = false;
-}
+};
 
 const addNumber = (number) => {
-   if(numberOne === null) {
+   if(firstValue === null) {
       display.innerText += number; 
     } 
-   else if (numberOne !== null && +display.innerText === numberOne) {
+   else if (firstValue !== null && parseFloat(display.innerText) === firstValue) {
       if (repeatedNumber === false) {
        repeatedNumber = true;
        display.innerText = number;
@@ -61,61 +57,75 @@ const addNumber = (number) => {
        display.innerText += number; 
        }
      }
- else if (numberOne !== null && +display.innerText !== numberOne) {
+ else if (firstValue !== null && parseFloat(display.innerText) !== firstValue) {
       display.innerText += number;
     }
 };
 
 const addDot = () => {
-  if(!display.innerText.includes(dot.innerText)){
+  if(!display.innerText.includes(dotButton.innerText)){
     if(display.innerText === ""){
-      display.innerText = 0 + dot.innerText;
+      display.innerText = 0 + dotButton.innerText;
     }
-  else {display.innerText += dot.innerText;
+  else {display.innerText += dotButton.innerText;
   }
 };
 };
 
-const addOperator = (operator) => {
+const checkOperation = () => {
+  repeatedNumber = false;
+
   if(display.innerText === "") {
-    numberOne = 0;
+    display.innerText = 0;
+    firstValue = 0;
+    return;
     };
 
-  if(numberOne === null) {
-    numberOne = +display.innerText;
+  if(firstValue === null) {
+    firstValue = parseFloat(display.innerText);
+    return;
   } 
-  else if (numberOne !== null) {
-    numberTwo = +display.innerText;
-}
+  else if (firstValue !== null) {
+    secondValue = parseFloat(display.innerText);
+    return;
+};
+};
+
+const addOperator = (operator) => {
+  checkOperation();
  
   if(operator === "+") {
-     if(numberTwo !== null){
+     if(secondValue !== null){
       display.innerText = operation(selectedOperation);
-      numberOne = +display.innerText;
+      firstValue = parseFloat(display.innerText);
+      secondValue = null;
     }
     selectedOperation = "suma";
     return;
  } 
  else if(operator === "-") {
-  if(numberTwo !== null){
+  if(secondValue !== null){
     display.innerText = operation(selectedOperation);
-    numberOne = +display.innerText;
+    firstValue = parseFloat(display.innerText);
+    secondValue = null;
    }
    selectedOperation = "resta";
    return;
  }  
  else if(operator === "*") {
-  if(numberTwo !== null){
+  if(secondValue !== null){
     display.innerText = operation(selectedOperation);
-    numberOne = +display.innerText;
+    firstValue = parseFloat(display.innerText);
+    secondValue = null;
    } 
    selectedOperation = "multiplicacion";
    return;
 } 
 else if(operator === "/") {
-  if(numberTwo !== null){
+  if(secondValue !== null){
     display.innerText = operation(selectedOperation);
-    numberOne = +display.innerText;
+    firstValue = parseFloat(display.innerText);
+    secondValue = null;
    }
    selectedOperation = "division";  
    return;
@@ -126,24 +136,30 @@ const makeOperation = () => {
  if(selectedOperation === null){
   return;
  } else {
-  numberTwo = +display.innerText;
+  secondValue = parseFloat(display.innerText);
   display.innerText = operation(selectedOperation);
-  numberOne = +display.innerText;
+  firstValue = parseFloat(display.innerText);
+  secondValue = null;
+  return;
  }
 };
 
 const operation = (selectedOperation) => {
 if (selectedOperation === "suma") {
-  suma(numberOne, numberTwo);
+  const result = suma(firstValue, secondValue);
+  return result;
 }
 else if (selectedOperation === "resta") {
-  resta(numberOne, numberTwo);
+  const result = resta(firstValue, secondValue);
+  return result;
 }
 else if (selectedOperation === "multiplicacion") {
-  multiplicacion(numberOne, numberTwo);
+  const result = multiplicacion(firstValue, secondValue);
+  return result;
 }
 else if (selectedOperation === "division") {
-  division(numberOne, numberTwo);
+  const result = division(firstValue, secondValue);
+  return result;
 }
 }
 
